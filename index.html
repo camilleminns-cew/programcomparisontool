@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inclusive Utility Investment Programs | Clean Energy Works</title>
+  <meta name="description" content="Map and compare inclusive utility investment programs across the U.S., including PAYS®-modeled programs and modified on-bill variations.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <a class="skip" href="#programs-h">Skip to program list</a>
+
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Inclusive Utility Investments</p>
+      <h1>Where utilities invest in homes, and customers pay only from the savings</h1>
+      <p class="lede">Explore every inclusive utility investment program we track. Filter by state, utility type and status, then compare up to three programs side by side to see which follow the PAYS® model and which have been modified.</p>
+      <dl class="stats">
+        <div><dt>states approved by regulators</dt><dd id="stat-states">–</dd></div>
+        <div><dt>active programs</dt><dd id="stat-active">–</dd></div>
+        <div><dt>programs and proposals tracked</dt><dd id="stat-total">–</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <main class="wrap main">
+    <p id="load-error" class="load-error" role="alert" hidden></p>
+
+    <section class="top" aria-labelledby="map-h">
+      <form class="card filters" id="filters" aria-labelledby="filters-h" onsubmit="return false">
+        <div class="filters-head">
+          <h2 id="filters-h">Filter programs</h2>
+          <button type="button" class="link-btn" id="reset">Reset</button>
+        </div>
+
+        <div class="field">
+          <label for="state-select">State</label>
+          <select id="state-select"><option value="all">All states</option></select>
+        </div>
+
+        <fieldset><legend>Utility type</legend><div class="chips" id="chips-type"></div></fieldset>
+        <fieldset><legend>Status</legend><div class="chips" id="chips-status"></div></fieldset>
+        <fieldset><legend>Program model</legend><div class="chips" id="chips-model"></div></fieldset>
+
+        <div class="explainer">
+          <p class="explainer-h">What makes a program PAYS®-modeled?</p>
+          <p>The utility pays upfront. Cost recovery is a charge tied to the meter, not a loan to the person. No credit check. Estimated savings exceed the charge from day one, and the charge stays with the meter when someone moves.</p>
+        </div>
+      </form>
+
+      <div class="card map-card">
+        <div class="row-head">
+          <h2 id="map-h">Adoption status, 2026</h2>
+          <p class="muted small">Select a state to filter. Last updated <span id="map-updated"></span>.</p>
+        </div>
+        <div class="map-scroll">
+          <div class="tile-map" id="tile-map"></div>
+        </div>
+        <div class="legend">
+          <div>
+            <p class="legend-h">State status</p>
+            <ul>
+              <li><span class="sw st-approved"></span>Approved by regulators</li>
+              <li><span class="sw st-adoption_proceedings"></span>Adoption proceedings underway</li>
+              <li><span class="sw st-formal_due_diligence"></span>Formal due diligence</li>
+              <li><span class="sw st-informal"></span>Informal due diligence</li>
+              <li><span class="sw st-none"></span>No activity</li>
+            </ul>
+          </div>
+          <div>
+            <p class="legend-h">Programs</p>
+            <ul>
+              <li><span class="mk mk-iou"></span>Active, investor-owned</li>
+              <li><span class="mk mk-coop"></span>Active, co-op or municipal</li>
+              <li><span class="mk mk-ended"></span>Program ended</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="programs-h">
+      <div class="row-head">
+        <h2 id="programs-h" tabindex="-1">Programs</h2>
+        <p class="muted" id="result-line" aria-live="polite"></p>
+      </div>
+      <div class="card list-card">
+        <ul class="program-list" id="program-list"></ul>
+      </div>
+    </section>
+
+    <section id="compare" aria-labelledby="compare-h">
+      <div class="row-head">
+        <h2 id="compare-h">Compare programs</h2>
+        <p class="muted" id="compare-line" aria-live="polite"></p>
+      </div>
+      <div class="card table-card">
+        <table class="compare">
+          <caption class="sr-only">Side-by-side comparison of up to three selected programs</caption>
+          <thead><tr id="compare-head"></tr></thead>
+          <tbody id="compare-body"></tbody>
+        </table>
+      </div>
+      <p class="muted small footnote">Documentation reflects what Clean Energy Works has on file. "Not on file" means we have not located the document yet. Models marked provisional are still under review by our team. PAYS® is a registered trademark of the Energy Efficiency Institute, Inc.</p>
+    </section>
+  </main>
+
+  <script src="assets/config.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
