@@ -17,12 +17,10 @@ PROGRAMS = os.path.join(ROOT, "data", "programs.csv")
 STATES = os.path.join(ROOT, "data", "states.csv")
 
 PROGRAM_COLS = [
-    "id", "publish", "program_name", "utility", "state", "utility_type", "status",
+    "id", "publish", "program_name", "program_url", "utility", "state", "utility_type", "status",
     "year_started", "year_ended", "model", "model_confirmed", "docket_or_authority",
     "check_utility_pays_upfront", "check_charge_tied_to_meter", "check_no_credit_check",
     "check_savings_exceed_charge", "check_transfers_with_meter", "check_open_to_renters",
-    "doc_directive", "doc_regulatory_approval", "doc_tariff", "doc_terms_conditions",
-    "doc_participant_agreement", "doc_notice", "doc_evaluation",
     "public_note", "internal_notes", "last_reviewed", "reviewed_by",
 ]
 STATE_COLS = ["code", "name", "status", "grid_row", "grid_col", "internal_notes"]
@@ -36,8 +34,6 @@ ALLOWED = {
 }
 CHECK_COLS = [c for c in PROGRAM_COLS if c.startswith("check_")]
 CHECK_VALUES = {"yes", "no", "partial", "unknown"}
-DOC_COLS = [c for c in PROGRAM_COLS if c.startswith("doc_")]
-DOC_VALUES = {"", "on_file", "unavailable", "confidential", "does_not_exist", "proposed"}
 STATE_STATUS = {"approved", "adoption_proceedings", "formal_due_diligence", "informal", "none"}
 
 errors, warnings = [], []
@@ -138,15 +134,14 @@ for p in programs:
         if v not in CHECK_VALUES:
             err(where, f"{col} is '{p.get(col)}', must be yes, no, partial or unknown")
 
-    for col in DOC_COLS:
-        v = p.get(col, "")
-        if v.lower().startswith("http"):
-            if not v.startswith("https://") and not v.startswith("http://"):
-                err(where, f"{col} link looks malformed")
-            if " " in v:
-                err(where, f"{col} link contains a space (use %20)")
-        elif v not in DOC_VALUES:
-            err(where, f"{col} is '{v}', must be a link or one of: on_file, unavailable, confidential, does_not_exist, proposed, or blank")
+    url = p.get("program_url", "")
+    if url:
+        if not url.startswith("https://"):
+            err(where, "program_url must start with https:// (paste the full web address)")
+        elif " " in url:
+            err(where, "program_url contains a space (use %20)")
+    if "<" in p.get("program_name", "") or "](" in p.get("program_name", ""):
+        err(where, "program_name contains link code; put the link in program_url instead")
 
     if p.get("last_reviewed") and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", p["last_reviewed"]):
         err(where, "last_reviewed should look like 2026-11-09")
