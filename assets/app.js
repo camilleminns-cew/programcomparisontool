@@ -42,19 +42,6 @@
     { col: "check_open_to_renters", label: "Open to renters" }
   ];
   var CHECK_TEXT = { yes: "Yes", no: "No", partial: "Partly", unknown: "To confirm" };
-  var DOCS = [
-    { col: "doc_directive", label: "Directive (law or order)" },
-    { col: "doc_regulatory_approval", label: "Regulatory approval" },
-    { col: "doc_tariff", label: "Approved tariff" },
-    { col: "doc_terms_conditions", label: "Terms & conditions" },
-    { col: "doc_participant_agreement", label: "Participant agreement" },
-    { col: "doc_notice", label: "Tenant / property-sale notice" },
-    { col: "doc_evaluation", label: "Program evaluation" }
-  ];
-  var DOC_TEXT = {
-    on_file: "On file", unavailable: "Unavailable", confidential: "Confidential",
-    does_not_exist: "Does not exist", proposed: "Proposed only", "": "Not on file"
-  };
 
   var programs = [];
   var states = {};
@@ -81,6 +68,17 @@
     });
     (children || []).forEach(function (c) { if (c) n.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
     return n;
+  }
+  /* Program name: a link (new tab) when program_url is filled in, plain text otherwise. */
+  function nameNode(p, cls) {
+    if (/^https:\/\//i.test(p.program_url || "")) {
+      return el("a", { class: cls + " name-link", href: p.program_url, target: "_blank", rel: "noopener noreferrer" }, [
+        p.program_name,
+        el("span", { class: "ext", "aria-hidden": "true", text: " ↗" }),
+        el("span", { class: "sr-only", text: " (opens in a new tab)" })
+      ]);
+    }
+    return el("span", { class: cls, text: p.program_name });
   }
   function labelOf(list, k) { var m = list.filter(function (x) { return x.k === k; })[0]; return m ? m.label : k; }
 
@@ -203,7 +201,7 @@
       var disabled = !picked && full;
       list.appendChild(el("li", { class: "program" + (picked ? " is-picked" : "") }, [
         el("div", { class: "program-main" }, [
-          el("span", { class: "program-name", text: p.program_name }),
+          nameNode(p, "program-name"),
           el("span", { class: "program-meta", text: p.utility + " · " + (states[p.state] ? states[p.state].name : p.state) + " · " + years(p) })
         ]),
         el("div", { class: "program-tags" }, [
@@ -232,7 +230,7 @@
       (function (p) {
         if (!p) { head.appendChild(el("th", { scope: "col" }, [el("div", { class: "slot-empty", text: "Add a program from the list above" })])); return; }
         head.appendChild(el("th", { scope: "col" }, [
-          el("span", { class: "col-name", text: p.program_name }),
+          nameNode(p, "col-name"),
           el("span", { class: "col-util", text: p.utility }),
           el("button", { type: "button", class: "link-btn", "aria-label": "Remove " + p.program_name + ", " + p.utility + " from comparison", onclick: function () { togglePick(p.id); } }, ["Remove"])
         ]));
@@ -279,17 +277,6 @@
       row(c.label, function (p) {
         var v = (p[c.col] || "unknown").toLowerCase();
         return { text: CHECK_TEXT[v] || v, cls: v === "yes" ? "v-yes" : v === "no" ? "v-no" : "v-muted" };
-      });
-    });
-
-    group("Documentation on file");
-    DOCS.forEach(function (d) {
-      row(d.label, function (p) {
-        var v = p[d.col] || "";
-        if (/^https?:\/\//i.test(v)) {
-          return { node: el("a", { href: v, target: "_blank", rel: "noopener" }, ["View document", el("span", { class: "sr-only", text: " (opens in a new tab)" })]) };
-        }
-        return { text: DOC_TEXT[v] || v, cls: v === "" ? "v-muted" : "" };
       });
     });
 
